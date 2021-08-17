@@ -1,0 +1,7 @@
+Praw
+requests
+flask
+dnspython
+pymongo[srs]
+datetime
+python-dateutil
