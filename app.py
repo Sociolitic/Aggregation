@@ -1,6 +1,6 @@
 from flask import Flask
 from flask import request
-from Aggreate import *
+from Aggregate import *
 
 app = Flask(__name__)
 
