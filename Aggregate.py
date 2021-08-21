@@ -2,6 +2,7 @@ import pymongo
 from pymongo import MongoClient
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
+from dateutil.parser import parse
 
 client = pymongo.MongoClient("mongodb+srv://KokilaReddy:KokilaReddy@cluster0.5nrpf.mongodb.net/Sociolitic?retryWrites=true&w=majority")
 db = client.Social_media_data
@@ -12,205 +13,299 @@ Instagram = db.instagram
 Reddit = db.reddit
 
 
-def sentiment_count(q,sentiment):
-    now = datetime.now()
-    current_date_=datetime.now
-    youtube=[0]
-    reddit=[0]
-    tumblr=[0]
-    insta=[0]
-    twitter=[0]
-    total=[0]
-    current_date = now.strftime("%Y-%m-%d %H:%M:%S")
+def mentions(tag):
+    twitter = Twitter.find({'tag': tag},{"sentiment","created_time"})
+    twitter_count=[0]*71
+    twitter_pos=[0]*71
+    twitter_neg=[0]*71
+    twitter_neu=[0]*71
+    for data in twitter:
+        for i in range (1,25):
+            if (data["created_time"] < datetime.now()- timedelta(hours = i-1) and data["created_time"] > datetime.now()- timedelta(hours = i)):
+                twitter_count[i-1]+=1
+                if data["sentiment"]=="Positive":
+                    twitter_pos[i-1]+=1
+                elif data["sentiment"]=="Negative":
+                    twitter_neg[i-1]+=1
+                else:
+                    twitter_neu[i-1]+=1
+        i=24
+        for j in range (1,31):
+            if (data["created_time"] < datetime.now()- timedelta(days = j-1) and data["created_time"] > datetime.now()- timedelta(days = j)):
+                twitter_count[i]+=1
+                if data["sentiment"]=="Positive":
+                    twitter_pos[i]+=1
+                elif data["sentiment"]=="Negative":
+                    twitter_neg[i]+=1
+                else:
+                    twitter_neu[i]+=1
+            i+=1
+        i=54
+        for j in range (1,13):
+            if (data["created_time"] < datetime.now()- relativedelta(months = j-1) and data["created_time"] > datetime.now()- relativedelta(months = j)):
+                twitter_count[i]+=1
+                if data["sentiment"]=="Positive":
+                    twitter_pos[i]+=1
+                elif data["sentiment"]=="Negative":
+                    twitter_neg[i]+=1
+                else:
+                    twitter_neu[i]+=1
+            i+=1
+        i=66
+        for j in range (1,5):
+            if (data["created_time"] < datetime.now()-relativedelta(years = j-1) and data["created_time"] > datetime.now()- relativedelta(years = j)):
+                twitter_count[i]+=1
+                if data["sentiment"]=="Positive":
+                    twitter_pos[i]+=1
+                elif data["sentiment"]=="Negative":
+                    twitter_neg[i]+=1
+                else:
+                    twitter_neu[i]+=1
+            i+=1
+    reddit = Reddit.find({'tag': tag},{"sentiment","created_time"})
+    reddit_count=[0]*71
+    reddit_pos=[0]*71
+    reddit_neg=[0]*71
+    reddit_neu=[0]*71
+    for data in reddit:
+        for i in range (1,25):
+            if (parse(data["created_time"] )< datetime.now()- timedelta(hours = i-1) and parse(data["created_time"] )> datetime.now()- timedelta(hours = i)):
+                reddit_count[i-1]+=1
+                if data["sentiment"]=="Positive":
+                    reddit_pos[i-1]+=1
+                elif data["sentiment"]=="Negative":
+                    reddit_neg[i-1]+=1
+                else:
+                    reddit_neu[i-1]+=1
+        i=24
+        for j in range (1,31):
+            if (parse(data["created_time"] )< datetime.now()- timedelta(days = j-1) and parse(data["created_time"] )> datetime.now()- timedelta(days = j)):
+                reddit_count[i]+=1
+                if data["sentiment"]=="Positive":
+                    reddit_pos[i]+=1
+                elif data["sentiment"]=="Negative":
+                    reddit_neg[i]+=1
+                else:
+                    reddit_neu[i]+=1
+            i+=1
+        i=54
+        for j in range (1,13):
+            if (parse(data["created_time"] )< datetime.now()- relativedelta(months = j-1) and parse(data["created_time"] )> datetime.now()- relativedelta(months = j)):
+                reddit_count[i]+=1
+                if data["sentiment"]=="Positive":
+                    reddit_pos[i]+=1
+                elif data["sentiment"]=="Negative":
+                    reddit_neg[i]+=1
+                else:
+                    reddit_neu[i]+=1
+            i+=1
+        i=66
+        for j in range (1,5):
+            if (parse(data["created_time"] )< datetime.now()-relativedelta(years = j-1) and parse(data["created_time"] )> datetime.now()- relativedelta(years = j)):
+                reddit_count[i]+=1
+                if data["sentiment"]=="Positive":
+                    reddit_pos[i]+=1
+                elif data["sentiment"]=="Negative":
+                    reddit_neg[i]+=1
+                else:
+                    reddit_neu[i]+=1
+            i+=1
+    tumblr = Tumblr.find({'tag': tag},{"sentiment","created_time"})
+    tumblr_count=[0]*71
+    tumblr_pos=[0]*71
+    tumblr_neg=[0]*71
+    tumblr_neu=[0]*71
+    for data in tumblr:
+        for i in range (1,25):
+            if (parse(data["created_time"] )< datetime.now()- timedelta(hours = i-1) and parse(data["created_time"] )> datetime.now()- timedelta(hours = i)):
+                tumblr_count[i-1]+=1
+                if data["sentiment"]=="Positive":
+                    tumblr_pos[i-1]+=1
+                elif data["sentiment"]=="Negative":
+                    tumblr_neg[i-1]+=1
+                else:
+                    tumblr_neu[i-1]+=1
+        i=24
+        for j in range (1,31):
+            if (parse(data["created_time"] )< datetime.now()- timedelta(days = j-1) and parse(data["created_time"] )> datetime.now()- timedelta(days = j)):
+                tumblr_count[i]+=1
+                if data["sentiment"]=="Positive":
+                    tumblr_pos[i]+=1
+                elif data["sentiment"]=="Negative":
+                    tumblr_neg[i]+=1
+                else:
+                    tumblr_neu[i]+=1
+            i+=1
+        i=54
+        for j in range (1,13):
+            if (parse(data["created_time"] )< datetime.now()- relativedelta(months = j-1) and parse(data["created_time"] )> datetime.now()- relativedelta(months = j)):
+                tumblr_count[i]+=1
+                if data["sentiment"]=="Positive":
+                    tumblr_pos[i]+=1
+                elif data["sentiment"]=="Negative":
+                    tumblr_neg[i]+=1
+                else:
+                    tumblr_neu[i]+=1
+            i+=1
+        i=66
+        for j in range (1,5):
+            if (parse(data["created_time"] )< datetime.now()-relativedelta(years = j-1) and parse(data["created_time"] )> datetime.now()- relativedelta(years = j)):
+                tumblr_count[i]+=1
+                if data["sentiment"]=="Positive":
+                    tumblr_pos[i]+=1
+                elif data["sentiment"]=="Negative":
+                    tumblr_neg[i]+=1
+                else:
+                    tumblr_neu[i]+=1
+            i+=1
+    youtube = YouTube.find({'tag': tag},{"sentiment","publishedTime"})
+    youtube_count=[0]*71
+    youtube_pos=[0]*71
+    youtube_neg=[0]*71
+    youtube_neu=[0]*71
+    for data in youtube:
+        for i in range (1,25):
+            if (parse(data["publishedTime"] )< datetime.now()- timedelta(hours = i-1) and parse(data["publishedTime"] )> datetime.now()- timedelta(hours = i)):
+                youtube_count[i-1]+=1
+                if data["sentiment"]=="Positive":
+                    youtube_pos[i-1]+=1
+                elif data["sentiment"]=="Negative":
+                    youtube_neg[i-1]+=1
+                else:
+                    youtube_neu[i-1]+=1
+        i=24
+        for j in range (1,31):
+            if (parse(data["publishedTime"] )< datetime.now()- timedelta(days = j-1) and parse(data["publishedTime"] )> datetime.now()- timedelta(days = j)):
+                youtube_count[i]+=1
+                if data["sentiment"]=="Positive":
+                    youtube_pos[i]+=1
+                elif data["sentiment"]=="Negative":
+                    youtube_neg[i]+=1
+                else:
+                    youtube_neu[i]+=1
+            i+=1
+        i=54
+        for j in range (1,13):
+            if (parse(data["publishedTime"] )< datetime.now()- relativedelta(months = j-1) and parse(data["publishedTime"] )> datetime.now()- relativedelta(months = j)):
+                youtube_count[i]+=1
+                if data["sentiment"]=="Positive":
+                    youtube_pos[i]+=1
+                elif data["sentiment"]=="Negative":
+                    youtube_neg[i]+=1
+                else:
+                    youtube_neu[i]+=1
+            i+=1
+        i=66
+        for j in range (1,5):
+            if (parse(data["publishedTime"] )< datetime.now()-relativedelta(years = j-1) and parse(data["publishedTime"] )> datetime.now()- relativedelta(years = j)):
+                youtube_count[i]+=1
+                if data["sentiment"]=="Positive":
+                    youtube_pos[i]+=1
+                elif data["sentiment"]=="Negative":
+                    youtube_neg[i]+=1
+                else:
+                    youtube_neu[i]+=1
+            i+=1
 
-    for i in range (1,25):
-        past_date = now - timedelta(hours = i)
-        past_date_str=past_date.strftime('%Y-%m-%d %H:%M:%S')
-        youtube.append(YouTube.count_documents( {'tag': q,'sentiment':sentiment, "publishedTime":{'$gt': (past_date_str)}})-sum(youtube))
-        twitter.append(Twitter.count_documents({'tag': q,'sentiment':sentiment, "created_time":{'$gt':(past_date)}})-sum(twitter))
-        tumblr.append(Tumblr.count_documents( { 'tag': q, 'sentiment':sentiment,"created_time":{'%gt':(past_date_str)}})-sum(tumblr))
-        insta.append(Instagram.count_documents( {'tag': q,'sentiment':sentiment, "publishedTime":{'%gt':(past_date_str)}})-sum(insta))
-        reddit.append(Reddit.count_documents( {'tag': q, 'sentiment':sentiment,"created_time":{'%gt':(past_date_str)}})-sum(reddit))
-        total.append(twitter[i]+tumblr[i]+insta[i]+reddit[i]+youtube[i])
-
-    for i in range (1,31):
-        past_date = now - timedelta(days = i)
-        past_date_str=past_date.strftime('%Y-%m-%d %H:%M:%S')
-        if(i>1):
-            youtube.append(YouTube.count_documents( {'tag': q,'sentiment':sentiment, "publishedTime":{'$gt': (past_date_str)}})-sum(youtube[25:24+i]))
-            twitter.append(Twitter.count_documents({'tag': q,'sentiment':sentiment, "created_time":{'$gt':(past_date)}})-sum(twitter[25:24+i]))
-            tumblr.append(Tumblr.count_documents( { 'tag': q,'sentiment':sentiment, "created_time":{'%gt':(past_date_str)}})-sum(tumblr[25:24+i]))
-            insta.append(Instagram.count_documents( {'tag': q,'sentiment':sentiment, "publishedTime":{'%gt':(past_date_str)}})-sum(insta[25:24+i]))
-            reddit.append(Reddit.count_documents( {'tag': q,'sentiment':sentiment, "created_time":{'%gt':(past_date_str)}})-sum(reddit[25:24+i]))
-        else:
-            youtube.append(YouTube.count_documents( {'tag': q,'sentiment':sentiment, "publishedTime":{'$gt': (past_date_str)}}))
-            twitter.append(Twitter.count_documents({'tag': q,'sentiment':sentiment, "created_time":{'$gt':(past_date)}}))
-            tumblr.append(Tumblr.count_documents( { 'tag': q,'sentiment':sentiment, "created_time":{'%gt':(past_date_str)}}))
-            insta.append(Instagram.count_documents( {'tag': q,'sentiment':sentiment, "publishedTime":{'%gt':(past_date_str)}}))
-            reddit.append(Reddit.count_documents( {'tag': q,'sentiment':sentiment, "created_time":{'%gt':(past_date_str)}}))
-        total.append(twitter[24+i]+tumblr[24+i]+insta[24+i]+reddit[24+i]+youtube[24+i])
-
-    for i in range (1,13):
-        past_date = now - relativedelta(months = i)
-        past_date_str=past_date.strftime('%Y-%m-%d %H:%M:%S')
-        if(i>1):
-            youtube.append(YouTube.count_documents( {'tag': q,'sentiment':sentiment, "publishedTime":{'$gt': (past_date_str)}})-sum(youtube[55:54+i]))
-            twitter.append(Twitter.count_documents({'tag': q,'sentiment':sentiment, "created_time":{'$gt':(past_date)}})-sum(twitter[55:54+i]))
-            tumblr.append(Tumblr.count_documents( { 'tag': q,'sentiment':sentiment, "created_time":{'%gt':(past_date_str)}})-sum(tumblr[55:54+i]))
-            insta.append(Instagram.count_documents( {'tag': q,'sentiment':sentiment, "publishedTime":{'%gt':(past_date_str)}})-sum(insta[55:54+i]))
-            reddit.append(Reddit.count_documents( {'tag': q,'sentiment':sentiment, "created_time":{'%gt':(past_date_str)}})-sum(reddit[55:54+i]))
-        else:
-            youtube.append(YouTube.count_documents( {'tag': q,'sentiment':sentiment, "publishedTime":{'$gt': (past_date_str)}}))
-            twitter.append(Twitter.count_documents({'tag': q, 'sentiment':sentiment,"created_time":{'$gt':(past_date)}}))
-            tumblr.append(Tumblr.count_documents( { 'tag': q,'sentiment':sentiment, "created_time":{'%gt':(past_date_str)}}))
-            insta.append(Instagram.count_documents( {'tag': q,'sentiment':sentiment, "publishedTime":{'%gt':(past_date_str)}}))
-            reddit.append(Reddit.count_documents( {'tag': q,'sentiment':sentiment, "created_time":{'%gt':(past_date_str)}}))
-        total.append(twitter[54+i]+tumblr[54+i]+insta[54+i]+reddit[54+i]+youtube[54+i])
-    for i in range (1,6):
-        past_date = now - relativedelta(years = i)
-        past_date_str=past_date.strftime('%Y-%m-%d %H:%M:%S')
-        if(i>1):
-            youtube.append(YouTube.count_documents( {'tag': q,'sentiment':sentiment, "publishedTime":{'$gt': (past_date_str)}})-sum(youtube[67:66+i]))
-            twitter.append(Twitter.count_documents({'tag': q,'sentiment':sentiment, "created_time":{'$gt':(past_date)}})-sum(twitter[67:66+i]))
-            tumblr.append(Tumblr.count_documents( { 'tag': q,'sentiment':sentiment, "created_time":{'%gt':(past_date_str)}})-sum(tumblr[67:66+i]))
-            insta.append(Instagram.count_documents( {'tag': q,'sentiment':sentiment, "publishedTime":{'%gt':(past_date_str)}})-sum(insta[67:66+i]))
-            reddit.append(Reddit.count_documents( {'tag': q,'sentiment':sentiment, "created_time":{'%gt':(past_date_str)}})-sum(reddit[67:66+i]))
-        else:
-            youtube.append(YouTube.count_documents( {'tag': q,'sentiment':sentiment, "publishedTime":{'$gt': (past_date_str)}}))
-            twitter.append(Twitter.count_documents({'tag': q, 'sentiment':sentiment,"created_time":{'$gt':(past_date)}}))
-            tumblr.append(Tumblr.count_documents( { 'tag': q,'sentiment':sentiment, "created_time":{'%gt':(past_date_str)}}))
-            insta.append(Instagram.count_documents( {'tag': q,'sentiment':sentiment, "publishedTime":{'%gt':(past_date_str)}}))
-            reddit.append(Reddit.count_documents( {'tag': q,'sentiment':sentiment, "created_time":{'%gt':(past_date_str)}}))
-        total.append(twitter[66+i]+tumblr[66+i]+insta[66+i]+reddit[66+i]+youtube[66+i])
-    del total[0],twitter[0],insta[0],youtube[0],reddit[0],tumblr[0]
-    return total,twitter,reddit,youtube,insta,tumblr
-
-def mentions(q):
-    Sentiment=["Positive","Negative","Neutral"]
-    youtube=[[],[],[],[]]
-    reddit=[[],[],[],[]]
-    tumblr=[[],[],[],[]]
-    insta=[[],[],[],[]]
-    twitter=[[],[],[],[]]
-    total=[[],[],[],[]]
-    for i in range (3):
-        sentiment = Sentiment[i]
-        total[i],twitter[i],reddit[i],youtube[i],insta[i],tumblr[i]=sentiment_count(q,sentiment)
-    for i in range (len(youtube[0])):
-        youtube[3].append(youtube[0][i]+youtube[1][i]+youtube[2][i])
-        insta[3].append(insta[0][i]+insta[1][i]+insta[2][i])
-        total[3].append(total[0][i]+total[1][i]+total[2][i])
-        twitter[3].append(twitter[0][i]+twitter[1][i]+twitter[2][i])
-        tumblr[3].append(tumblr[0][i]+tumblr[1][i]+tumblr[2][i])
-        reddit[3].append(reddit[0][i]+reddit[1][i]+reddit[2][i])
-
+    total_positive=[0]*71
+    total_negative=[0]*71
+    total_neutral=[0]*71
+    total=[0]*71
+    for i in range (len(twitter_count)):
+        total_positive[i]=twitter_pos[i]+reddit_pos[i]+tumblr_pos[i]+youtube_pos[i]
+        total_negative[i]=twitter_neg[i]+reddit_neg[i]+tumblr_neg[i]+youtube_neg[i]
+        total_neutral[i]=twitter_neu[i]+reddit_neu[i]+tumblr_neu[i]+youtube_neu[i]
+        total[i]=total_positive[i]+total_negative[i]+total_neutral[i]
 
     counts={
-        'tag':q,
+        'tag':tag,
         'all_mentions':{
-            'total':{'hourly': total[3][0:24],
-                 'daily':total[3][24:54],
-                 'monthly':total[3][54:66],
-                 'yearly':total[3][66:72]},
-        'twitter':{'hourly': twitter[3][0:24],
-                 'daily':twitter[3][24:54],
-                 'monthly':twitter[3][54:66],
-                 'yearly':twitter[3][66:72]},
-        'youtube':{'hourly': youtube[3][0:24],
-                 'daily':youtube[3][24:54],
-                 'monthly':youtube[3][54:66],
-                 'yearly':youtube[3][66:72]},
-        'reddit':{'hourly': reddit[3][0:24],
-                 'daily':reddit[3][24:54],
-                 'monthly':reddit[3][54:66],
-                 'yearly':reddit[3][66:72]},
-        'tumblr':{'hourly': tumblr[3][0:24],
-                 'daily':tumblr[3][24:54],
-                 'monthly':tumblr[3][54:66],
-                 'yearly':tumblr[3][66:72]},
-        'insta':{'hourly': insta[3][0:24],
-                 'daily':insta[3][24:54],
-                 'monthly':insta[3][54:66],
-                 'yearly':insta[3][66:72]}
+            'total':{'hourly': total[0:24],
+                 'daily':total[24:54],
+                 'monthly':total[54:66],
+                 'yearly':total[66:72]},
+        'twitter':{'hourly': twitter_count[0:24],
+                 'daily':twitter_count[24:54],
+                 'monthly':twitter_count[54:66],
+                 'yearly':twitter_count[66:72]},
+        'youtube':{'hourly': youtube_count[0:24],
+                 'daily':youtube_count[24:54],
+                 'monthly':youtube_count[54:66],
+                 'yearly':youtube_count[66:72]},
+        'reddit':{'hourly': reddit_count[0:24],
+                 'daily':reddit_count[24:54],
+                 'monthly':reddit_count[54:66],
+                 'yearly':reddit_count[66:72]},
+        'tumblr':{'hourly': tumblr_count[0:24],
+                 'daily':tumblr_count[24:54],
+                 'monthly':tumblr_count[54:66],
+                 'yearly':tumblr_count[66:72]},
         },
         'positive_mentions':{
-            'total':{'hourly': total[0][0:24],
-                 'daily':total[0][24:54],
-                 'monthly':total[0][54:66],
-                 'yearly':total[0][66:72]},
-        'twitter':{'hourly': twitter[0][0:24],
-                 'daily':twitter[0][24:54],
-                 'monthly':twitter[0][54:66],
-                 'yearly':twitter[0][66:72]},
-        'youtube':{'hourly': youtube[0][0:24],
-                 'daily':youtube[0][24:54],
-                 'monthly':youtube[0][54:66],
-                 'yearly':youtube[0][66:72]},
-        'reddit':{'hourly': reddit[0][0:24],
-                 'daily':reddit[0][24:54],
-                 'monthly':reddit[0][54:66],
-                 'yearly':reddit[0][66:72]},
-        'tumblr':{'hourly': tumblr[0][0:24],
-                 'daily':tumblr[0][24:54],
-                 'monthly':tumblr[0][54:66],
-                 'yearly':tumblr[0][66:72]},
-        'insta':{'hourly': insta[0][0:24],
-                 'daily':insta[0][24:54],
-                 'monthly':insta[0][54:66],
-                 'yearly':insta[0][66:72]}
+            'total':{'hourly': total_positive[0:24],
+                 'daily':total_positive[24:54],
+                 'monthly':total_positive[54:66],
+                 'yearly':total_positive[66:72]},
+        'twitter':{'hourly': twitter_pos[0:24],
+                 'daily':twitter_pos[24:54],
+                 'monthly':twitter_pos[54:66],
+                 'yearly':twitter_pos[66:72]},
+        'youtube':{'hourly': youtube_pos[0:24],
+                 'daily':youtube_pos[24:54],
+                 'monthly':youtube_pos[54:66],
+                 'yearly':youtube_pos[66:72]},
+        'reddit':{'hourly': reddit_pos[0:24],
+                 'daily':reddit_pos[24:54],
+                 'monthly':reddit_pos[54:66],
+                 'yearly':reddit_pos[66:72]},
+        'tumblr':{'hourly': tumblr_pos[0:24],
+                 'daily':tumblr_pos[24:54],
+                 'monthly':tumblr_pos[54:66],
+                 'yearly':tumblr_pos[66:72]},
         },
         'negative_mentions':{
-            'total':{'hourly': total[1][0:24],
-                 'daily':total[1][24:54],
-                 'monthly':total[1][54:66],
-                 'yearly':total[1][66:72]},
-        'twitter':{'hourly': twitter[1][0:24],
-                 'daily':twitter[1][24:54],
-                 'monthly':twitter[1][54:66],
-                 'yearly':twitter[1][66:72]},
-        'youtube':{'hourly': youtube[1][0:24],
-                 'daily':youtube[1][24:54],
-                 'monthly':youtube[1][54:66],
-                 'yearly':youtube[1][66:72]},
-        'reddit':{'hourly': reddit[1][0:24],
-                 'daily':reddit[1][24:54],
-                 'monthly':reddit[1][54:66],
-                 'yearly':reddit[1][66:72]},
-        'tumblr':{'hourly': tumblr[1][0:24],
-                 'daily':tumblr[1][24:54],
-                 'monthly':tumblr[1][54:66],
-                 'yearly':tumblr[1][66:72]},
-        'insta':{'hourly': insta[1][0:24],
-                 'daily':insta[1][24:54],
-                 'monthly':insta[1][54:66],
-                 'yearly':insta[1][66:72]}
+            'total':{'hourly': total_negative[0:24],
+                 'daily':total_negative[24:54],
+                 'monthly':total_negative[54:66],
+                 'yearly':total_negative[66:72]},
+        'twitter':{'hourly': twitter_neg[0:24],
+                 'daily':twitter_neg[24:54],
+                 'monthly':twitter_neg[54:66],
+                 'yearly':twitter_neg[66:72]},
+        'youtube':{'hourly': youtube_neg[0:24],
+                 'daily':youtube_neg[24:54],
+                 'monthly':youtube_neg[54:66],
+                 'yearly':youtube_neg[66:72]},
+        'reddit':{'hourly': reddit_neg[0:24],
+                 'daily':reddit_neg[24:54],
+                 'monthly':reddit_neg[54:66],
+                 'yearly':reddit_neg[66:72]},
+        'tumblr':{'hourly': tumblr_neg[0:24],
+                 'daily':tumblr_neg[24:54],
+                 'monthly':tumblr_neg[54:66],
+                 'yearly':tumblr_neg[66:72]},
         },
         'neutral_mentions':{
-            'total':{'hourly': total[2][0:24],
-                 'daily':total[2][24:54],
-                 'monthly':total[2][54:66],
-                 'yearly':total[2][66:72]},
-        'twitter':{'hourly': twitter[2][0:24],
-                 'daily':twitter[2][24:54],
-                 'monthly':twitter[2][54:66],
-                 'yearly':twitter[2][66:72]},
-        'youtube':{'hourly': youtube[2][0:24],
-                 'daily':youtube[2][24:54],
-                 'monthly':youtube[2][54:66],
-                 'yearly':youtube[2][66:72]},
-        'reddit':{'hourly': reddit[2][0:24],
-                 'daily':reddit[2][24:54],
-                 'monthly':reddit[2][54:66],
-                 'yearly':reddit[2][66:72]},
-        'tumblr':{'hourly': tumblr[2][0:24],
-                 'daily':tumblr[2][24:54],
-                 'monthly':tumblr[2][54:66],
-                 'yearly':tumblr[2][66:72]},
-        'insta':{'hourly': insta[2][0:24],
-                 'daily':insta[2][24:54],
-                 'monthly':insta[2][54:66],
-                 'yearly':insta[2][66:72]}
+            'total':{'hourly': total_neutral[0:24],
+                 'daily':total_neutral[24:54],
+                 'monthly':total_neutral[54:66],
+                 'yearly':total_neutral[66:72]},
+        'twitter':{'hourly': twitter_neu[0:24],
+                 'daily':twitter_neu[24:54],
+                 'monthly':twitter_neu[54:66],
+                 'yearly':twitter_neu[66:72]},
+        'youtube':{'hourly': youtube_neg[0:24],
+                 'daily':youtube_neg[24:54],
+                 'monthly':youtube_neg[54:66],
+                 'yearly':youtube_neg[66:72]},
+        'reddit':{'hourly': reddit_neu[0:24],
+                 'daily':reddit_neu[24:54],
+                 'monthly':reddit_neu[54:66],
+                 'yearly':reddit_neu[66:72]},
+        'tumblr':{'hourly': tumblr_neu[0:24],
+                 'daily':tumblr_neu[24:54],
+                 'monthly':tumblr_neu[54:66],
+                 'yearly':tumblr_neu[66:72]},
         }
     }
     return counts
-    
